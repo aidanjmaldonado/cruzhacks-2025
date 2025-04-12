@@ -1,0 +1,16 @@
+# Python
+backend/venv/
+backend/__pycache__/
+backend/*.pyc
+backend/*.pyo
+backend/*.pyd
+
+# Environment variables
+backend/.env
+
+# IDE stuff (just in case)
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
