@@ -23,9 +23,20 @@ class StartPayload(BaseModel):
 
 class SubmitPayload(BaseModel):
     question: str
-    name: str
+    answer: str
 
 # Connect to MongoDB TO-DO
+    
+try:
+    client = AsyncIOMotorClient("mongodb+srv://aijmaldo:7Bk3rNMQHpcMHDpF@interviewcluster.coi67ff.mongodb.net/?retryWrites=true&w=majority&appName=interviewCluster", serverSelectionTimeoutMS=5000)
+    # Test the connection
+    client.admin.command('ping')
+    print("Connected successfully to MongoDB")
+except Exception as e:
+    print(f"MongoDB connection error: {e}")
+    # Fallback to local file-based storage for development
+    print("Using local file storage as fallback")    
+
 client = AsyncIOMotorClient("mongodb+srv://aijmaldo:7Bk3rNMQHpcMHDpF@interviewcluster.coi67ff.mongodb.net/?retryWrites=true&w=majority&appName=interviewCluster")
 db = client["interviews-db"]
 collection = db["interviews"]
@@ -51,8 +62,6 @@ async def start_interview(user_auth: Annotated[Optional[str], Header()] = None):
     count = await collection.count_documents({"userID": user_ID})
     interview_num = count + 1
 
-    user_ID = str(uuid.uuid4())
-
     # Create new interview document
     new_interview = {
         "userID": user_ID,
@@ -76,12 +85,12 @@ async def start_interview(user_auth: Annotated[Optional[str], Header()] = None):
     # Return Response
     return {
         "user_ID": user_ID,
-        "session_ID": session_ID,
+        "session_ID": str(session_ID),
         "initial_question": initial_question,
         "name": name
     }
 
-@app.post("/interview/{session_ID")
+@app.post("/interview/{session_ID}")
 async def submit_answer(session_ID, payload: SubmitPayload):
 
     # Convert session id into valid string
@@ -108,12 +117,12 @@ async def submit_answer(session_ID, payload: SubmitPayload):
     
     # Update the document by pushing to the conversation array
     await collection.update_one(
-        {"_id": obj_id},
+        {"_id": str(obj_id)},
         {"$push": {"conversation": conversation_entry}}
     )
 
     # Get updated document to check conversation length
-    updated_interview = await collection.find_one({"_id": obj_id})
+    updated_interview = await collection.find_one({"_id": str(obj_id)})
     conversation = updated_interview["conversation"]
     name = updated_interview.get("name", "Unknown")
 
@@ -136,7 +145,7 @@ async def submit_answer(session_ID, payload: SubmitPayload):
     )
     ''' 
     await collection.update_one(
-        {"_id": obj_id},
+        {"_id": str(obj_id)},
         {
             "$set": {
                 "name": name
