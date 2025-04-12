@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  mariadb:
+    image: bitnami/mariadb:latest
+    environment:
+      - MARIADB_ROOT_PASSWORD=your_root_password # Replace with a strong password
+      - MARIADB_USER=bn_mediawiki
+      - MARIADB_PASSWORD=your_mediawiki_password # Replace with a strong password
+      - MARIADB_DATABASE=bitnami_mediawiki
+    ports:
+      - "3306:3306" # Optional: Expose the database port for external access (use with caution)
+    volumes:
+      - mariadb_data:/bitnami/mariadb/data
+
+  mediawiki:
+    image: bitnami/mediawiki:latest
+    ports:
+      - "4050:8080"
+      - "8443:8443"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes # For quick setup, but not recommended for production
+      - MEDIAWIKI_DATABASE_HOST=mariadb
+      - MEDIAWIKI_DATABASE_PORT_NUMBER=3306
+      - MEDIAWIKI_DATABASE_USER=bn_mediawiki
+      - MEDIAWIKI_DATABASE_PASSWORD=your_mediawiki_password # Use the same password as above
+      - MEDIAWIKI_DATABASE_NAME=bitnami_mediawiki
+    depends_on:
+      - mariadb
+
+volumes:
+  mariadb_data:
+    driver: local
