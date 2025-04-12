@@ -1,7 +1,9 @@
 # run `docker container prune` to kill all cached builds
+# build: docker buiild -t <name> .
+# run: docker 
 
 # Use a python base image
-FROM python:3.10-slim
+FROM python:3.12.7-slim
 
 # Set the working directory
 WORKDIR /workspaces/

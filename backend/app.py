@@ -1,7 +1,9 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Header
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Annotated
 from motor.motor_asyncio import AsyncIOMotorClient
+from bson import ObjectId
+import uuid
 import os
 import json
 
@@ -15,51 +17,82 @@ os.makedirs(DATA_DIR, exist_ok=True)
 
 # Pydantic Payloads
 class StartPayload(BaseModel):
-    # Initial metadata
-    name: str
-    # Add affiliations?
-    # Add # years since departure?
+    user_ID: str
+    session_ID: str
+    initial_question: str
 
 class SubmitPayload(BaseModel):
-    name: str
     question: str
-    answer: str
+    name: str
 
 # Connect to MongoDB TO-DO
 client = AsyncIOMotorClient("mongodb+srv://aijmaldo:7Bk3rNMQHpcMHDpF@interviewcluster.coi67ff.mongodb.net/?retryWrites=true&w=majority&appName=interviewCluster")
 db = client["interviews-db"]
 collection = db["interviews"]
 
-@app.post("/interviews/start")
-async def start_interview(payload: StartPayload):
+@app.get("/interview")
+async def start_interview(user_auth: Annotated[Optional[str], Header()] = None):
 
+    # Determine if new or returning user
+    if not user_auth:
+        # New user: generate unique id
+        user_ID = user_ID = str(uuid.uuid4())
+        name = ""
+    else:
+        # Returning user: keep existing id
+        user_ID = user_auth
+        # Set existing use-name
+        latest = await collection.find_one({"userID": user_ID}, sort=[("interview_number", -1)])
+        if not latest:
+            raise HTTPException(status_code=404, detail="Returning user ID not found.")
+        name = latest["name"]
+        
     # Get the amount of interviews created by User
-    count = await collection.count_documents({"name": payload.name})
+    count = await collection.count_documents({"userID": user_ID})
     interview_num = count + 1
+
+    user_ID = str(uuid.uuid4())
 
     # Create new interview document
     new_interview = {
-        "name": payload.name,
+        "userID": user_ID,
+        "name": name,
         "interview_number": interview_num,
-        "conversation": [],
+        "conversation": []
     }
 
     # Insert into MongoDB
     result = await collection.insert_one(new_interview)
 
+    # Initial question:
+    if not user_auth:
+        initial_question = "Hi, I'm Hazel. What would you like for me to refer to you as?"
+    else:
+        initial_question = f"Hi, {name}, what would you like to talk about today?"
+
+    # Generate unique Session ID
+    session_ID = result.inserted_id
+
     # Return Response
     return {
-        "message": f"Interview started for {payload.name} (Interview{interview_num})",
-        "interview_id": str(result.inserted_id),
-        "next_question": f"Hi {payload.name}! What would you like to talk about today?"
+        "user_ID": user_ID,
+        "session_ID": session_ID,
+        "initial_question": initial_question,
+        "name": name
     }
 
-@app.post("/interviews/submit")
-async def submit_answer(payload: SubmitPayload):
+@app.post("/interview/{session_ID")
+async def submit_answer(session_ID, payload: SubmitPayload):
+
+    # Convert session id into valid string
+    try:
+        obj_id = ObjectId(session_ID)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid session ID.")
 
     # Open most recent (Current) interview with this user
     latest_interview = await collection.find_one(
-        {"name": payload.name},
+        {"_id": obj_id},
         sort=[("interview_number", -1)]
     )
     
@@ -75,21 +108,48 @@ async def submit_answer(payload: SubmitPayload):
     
     # Update the document by pushing to the conversation array
     await collection.update_one(
-        {"_id": latest_interview["_id"]},
+        {"_id": obj_id},
         {"$push": {"conversation": conversation_entry}}
     )
 
     # Get updated document to check conversation length
-    updated_interview = await collection.find_one({"_id": latest_interview["_id"]})
-
+    updated_interview = await collection.find_one({"_id": obj_id})
+    conversation = updated_interview["conversation"]
+    name = updated_interview.get("name", "Unknown")
 
     # Generate next quesiton
-    # with Hazel() as agent:
-        # agent.process_user_message(string)
-    next_question = "--Call Sylvia's LLM Here: Generate Next Question Based on Prior Convo--"
+    '''When Sylvia finishes Hazel
+    next_question, next_state, updated_name = Hazel().get_message(
+        state=("INITIAL" if name == "" else "SHARING"),
+        conversation=conversation,
+        name=name
+    )
     
-    return {"next_question": next_question}
+    # Update Mongo DB with Hazel information
+    await collection.update_one(
+        {"_id": obj_id},
+        {
+            "$set": {
+                "name": updated_name
+            }
+        }
+    )
+    ''' 
+    await collection.update_one(
+        {"_id": obj_id},
+        {
+            "$set": {
+                "name": name
+            }
+        }
+    )
+    next_question = "--Call Sylvia's LLM Here: Generate Next Question Based on Prior Convo--"
 
+    # Return next question to client    
+    # return {"next_question": next_question, "name": updated_name}
+    return {"next_question": next_question, "name": name}
+
+'''
 @app.get("/interviews/{name}") # Not really necessary if we're not ever filtering by User
 async def get_interview(name: str, interview_number: Optional[int] = None):
     # If interview number is provided, get that specific interview
@@ -131,3 +191,4 @@ async def get_all_interviews(name: str):
         interview["_id"] = str(interview["_id"])
     
     return interviews
+'''
