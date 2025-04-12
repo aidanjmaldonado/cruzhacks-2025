@@ -1,0 +1,13 @@
+{
+    "name": "Alph",
+    "q-a pairs": [
+        {
+            "question": "Hi Alph! What would you like to talk about today?", 
+            "answer": "I would like to talk about how to go about securing Housing in Santa Cruz."
+        },
+        {
+            "question": "What is your affiliation with UCSC?",
+            "answer": "I studied Computer Science in 2014."
+        }
+    ]
+}

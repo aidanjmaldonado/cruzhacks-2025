@@ -2,8 +2,8 @@
     "name": "Avery",
     "conversation": [
         {
-            "Hazel": "What is your favorite color?", 
-            "User": "My favorite color is red!"
+            "Hazel": "Hi Avery! What would you like to talk about today?", 
+            "User": "I would like to talk about enrolling in a class from a waitlist."
         },
         {
             "Hazel": "What is your affiliation with UCSC?",
