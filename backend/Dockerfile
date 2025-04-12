@@ -3,7 +3,7 @@
 # run: docker 
 
 # Use a python base image
-FROM python:3.12.7-slim
+FROM python:3.12.7
 
 # Set the working directory
 WORKDIR /workspaces/
