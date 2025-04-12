@@ -1,0 +1,13 @@
+{
+    "name": "Avery",
+    "conversation": [
+        {
+            "Hazel": "What is your favorite color?", 
+            "User": "My favorite color is red!"
+        },
+        {
+            "Hazel": "What is your affiliation with UCSC?",
+            "User": "I worked part time as a Financial Aid Officer in 2014."
+        }
+    ]
+}
