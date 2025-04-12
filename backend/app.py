@@ -11,6 +11,8 @@ app = FastAPI()
 DATA_DIR = "./interviews"
 os.makedirs(DATA_DIR, exist_ok=True)
 
+# Questions of interest: How do we have FastAPI have sessions - so that our LLM Api has differentiation between users?
+
 # Pydantic Payloads
 class StartPayload(BaseModel):
     # Initial metadata
@@ -79,13 +81,12 @@ async def submit_answer(payload: SubmitPayload):
 
     # Get updated document to check conversation length
     updated_interview = await collection.find_one({"_id": latest_interview["_id"]})
-    num_turns = len(updated_interview["conversation"])
 
-    # Generate next question
-    if num_turns == 1:
-        next_question = "What is your affiliation with UCSC?"
-    else:
-        next_question = "--Call Sylvia's LLM Here: Generate Next Question Based on Prior Convo--"
+
+    # Generate next quesiton
+    # with Hazel() as agent:
+        # agent.process_user_message(string)
+    next_question = "--Call Sylvia's LLM Here: Generate Next Question Based on Prior Convo--"
     
     return {"next_question": next_question}
 
