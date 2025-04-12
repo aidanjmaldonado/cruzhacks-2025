@@ -1,0 +1,13 @@
+{
+    "name": "Avery",
+    "conversation": [
+        {
+            "Hazel": "Hi Alex! What would you like to talk about today?", 
+            "User": "I would like to talk about the Financial Aid office."
+        },
+        {
+            "Hazel": "What is your affiliation with UCSC?",
+            "User": "I am a current Professor in the Psychology Department at UCSC."
+        }
+    ]
+}
