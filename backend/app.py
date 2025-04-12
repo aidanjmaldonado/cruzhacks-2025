@@ -28,15 +28,6 @@ client = AsyncIOMotorClient("mongodb+srv://aijmaldo:7Bk3rNMQHpcMHDpF@interviewcl
 db = client["interviews-db"]
 collection = db["interviews"]
 
-# Helper to get latest interview path
-# def get_latest_filepath(name: str) -> str:
-#     index = 1
-#     filepath = os.path.join(DATA_DIR, f"{name}_Interview{index}.json")
-#     while os.path.exists(filepath):
-#         index += 1
-#         filepath = os.path.join(DATA_DIR, f"{name}_Interview{index}.json")
-#     return os.path.join(DATA_DIR, f"{name}_Interview{index - 1}.json")
-
 @app.post("/interviews/start")
 async def start_interview(payload: StartPayload):
 
