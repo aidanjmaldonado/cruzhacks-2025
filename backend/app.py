@@ -1,11 +1,10 @@
 from fastapi import FastAPI, HTTPException, Header
 from pydantic import BaseModel
-from typing import List, Optional, Annotated
+from typing import Optional, Annotated
 from motor.motor_asyncio import AsyncIOMotorClient
 from bson import ObjectId
 import uuid
 import os
-import json
 
 # Create app and interviews directory
 # (Run separately with uvicorn app:app --reload --host 0.0.0.0 --port 8081)
@@ -26,23 +25,29 @@ class SubmitPayload(BaseModel):
     answer: str
 
 # Connect to MongoDB TO-DO
-    
 try:
-    client = AsyncIOMotorClient("mongodb+srv://aijmaldo:7Bk3rNMQHpcMHDpF@interviewcluster.coi67ff.mongodb.net/?retryWrites=true&w=majority&appName=interviewCluster", serverSelectionTimeoutMS=5000)
+    client = AsyncIOMotorClient(
+        "mongodb+srv://aijmaldo:7Bk3rNMQHpcMHDpF@interviewcluster.coi67ff.mongodb.net/?retryWrites=true&w=majority&appName=interviewCluster",
+        serverSelectionTimeoutMS=5000
+    )
     # Test the connection
     client.admin.command('ping')
     print("Connected successfully to MongoDB")
 except Exception as e:
     print(f"MongoDB connection error: {e}")
     # Fallback to local file-based storage for development
-    print("Using local file storage as fallback")    
+    print("Using local file storage as fallback")
 
-client = AsyncIOMotorClient("mongodb+srv://aijmaldo:7Bk3rNMQHpcMHDpF@interviewcluster.coi67ff.mongodb.net/?retryWrites=true&w=majority&appName=interviewCluster")
+# client = AsyncIOMotorClient("mongodb+srv://aijmaldo:7Bk3rNMQHpcMHDpF@interviewcluster.coi67ff.mongodb.net/?retryWrites=true&w=majority&appName=interviewCluster")
 db = client["interviews-db"]
 collection = db["interviews"]
 
+@app.get("/interview/dog")
+async def start_interview():
+    return {"dog":"fluff"}
+
 @app.get("/interview")
-async def start_interview(user_auth: Annotated[Optional[str], Header()] = None):
+async def start_interview(user_auth: Annotated[Optional[str], Header(alias="User-Auth")] = None):
 
     # Determine if new or returning user
     if not user_auth:
@@ -117,12 +122,12 @@ async def submit_answer(session_ID, payload: SubmitPayload):
     
     # Update the document by pushing to the conversation array
     await collection.update_one(
-        {"_id": str(obj_id)},
+        {"_id": obj_id},
         {"$push": {"conversation": conversation_entry}}
     )
 
     # Get updated document to check conversation length
-    updated_interview = await collection.find_one({"_id": str(obj_id)})
+    updated_interview = await collection.find_one({"_id": obj_id})
     conversation = updated_interview["conversation"]
     name = updated_interview.get("name", "Unknown")
 
@@ -145,7 +150,7 @@ async def submit_answer(session_ID, payload: SubmitPayload):
     )
     ''' 
     await collection.update_one(
-        {"_id": str(obj_id)},
+        {"_id": obj_id},
         {
             "$set": {
                 "name": name
@@ -156,7 +161,7 @@ async def submit_answer(session_ID, payload: SubmitPayload):
 
     # Return next question to client    
     # return {"next_question": next_question, "name": updated_name}
-    return {"next_question": next_question, "name": name}
+    return {"next_question": next_question, "name": "name"}
 
 '''
 @app.get("/interviews/{name}") # Not really necessary if we're not ever filtering by User
