@@ -23,7 +23,7 @@ app.add_middleware(
 
 
 class SubmitPayload(BaseModel):
-    conversation: list
+    chat: list
 
 # Connect to MongoDB TO-DO
 try:
@@ -50,16 +50,14 @@ async def submit_answer(payload: SubmitPayload):
     # Activate key
     load_dotenv()
 
-    # Generate next quesiton
-    nut = Nut()
-
     # Formulate context for RAG injection
-    additional_context = [entry["text"] for entry in payload["chat"] if "text" in entry]
-    context = []
-    context += additional_context[:-1]
+    additional_context = [entry["text"] for entry in payload.chat]
+    nut = Nut(additional_context[:-1])
 
-    nut = Nut(context)
+    # Generate next quesiton
     answer = nut.prompt(additional_context[-1])
+
+    print(answer)
 
     # Return next question to client    
     return {"answer": answer}
