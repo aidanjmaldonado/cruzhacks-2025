@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { AppContext } from '../Contexts/AppContext';
 import { useNavigate } from 'react-router-dom';
+import TypyingAnimation from '../Animations/typing';
 import {
   Box,
   Typography,
@@ -39,6 +40,7 @@ const ChatWindow = () => {
   const submitAnswer = async (answer) => {
     const lastQuestion = messages.findLast((msg) => msg.sender === 'bot')?.text || '';
     try {
+
       const res = await api.submitAnswer(lastQuestion, answer, session_ID);
       setMessages((prev) => [
         ...prev,
