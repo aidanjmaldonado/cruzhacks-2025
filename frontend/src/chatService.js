@@ -18,7 +18,7 @@ export async function startInterview() {
     }
     const data = await response.json();
     if(!userToken){
-      localStorage.setItem('userToken', data.userID);
+      localStorage.setItem('userToken', data.user_ID);
     }
     console.log(data);
     return data;

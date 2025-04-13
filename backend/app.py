@@ -62,6 +62,20 @@ async def start_interview():
 @app.get("/interview")
 async def start_interview(user_auth: Annotated[Optional[str], Header(alias="Authorization")] = None):
 
+    token = None
+    if user_auth and user_auth.startswith("Bearer "):
+        token = user_auth.removeprefix("Bearer ").strip()
+
+    # Determine if new or returning user
+    if not token:
+        # New user: generate unique ID
+        user_ID = str(uuid.uuid4())
+        name = ""
+    else:
+        # Returning user: keep existing id
+        user_ID = token
+        print("User token", token)
+
     # Determine if new or returning user
     if not user_auth:
         # New user: generate unique id
@@ -69,7 +83,7 @@ async def start_interview(user_auth: Annotated[Optional[str], Header(alias="Auth
         name = ""
     else:
         # Returning user: keep existing id
-        user_ID = user_auth
+        user_ID = token
         print("User token", user_auth)
         # Set existing user-name
         latest = await collection.find_one({"userID": user_ID}, sort=[("interview_number", -1)])
