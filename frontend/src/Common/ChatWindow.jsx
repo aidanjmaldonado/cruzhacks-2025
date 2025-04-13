@@ -11,6 +11,8 @@ import {
   AppBar,
   Toolbar,
   Divider,
+  IconButton,
+  Tooltip,
 } from '@mui/material';
 import TypingAnimation from '../Animations/model_typing';
 
@@ -71,7 +73,7 @@ const ChatWindow = ({
           mt: { xs: 3, sm: 5 },
           display: 'flex',
           flexDirection: 'column',
-          // border: '1px solid #e0e0e0',
+          border: '1px solid #e0e0e0',
           borderRadius: 3,
           boxShadow: '0 2px 10px rgba(0, 0, 0, 0.05)',
           overflow: 'hidden',
@@ -88,16 +90,42 @@ const ChatWindow = ({
               {name ? `Chat with ${name}` : 'Hazel'}
             </Typography>
             <Box sx={{ display: 'flex', gap: 1 }}>
-              {additionalButtons.map((button, index) => (
-                <Button
-                  key={index}
-                  color="inherit"
-                  onClick={button.onClick}
-                  sx={{ textTransform: 'none', fontWeight: 500 }}
-                >
-                  {button.label}
-                </Button>
-              ))}
+              {additionalButtons.map((button, index) =>
+                button.icon ? (
+                  <Tooltip key={index} title={button.tooltip || ''}>
+                    <IconButton
+                      color="inherit"
+                      onClick={button.onClick}
+                      sx={{
+                        color: '#fffefa',
+                        borderRadius: 1,
+                        '&:hover': {
+                          bgcolor: 'rgba(255, 255, 255, 0.1)',
+                        },
+                      }}
+                    >
+                      {button.icon}
+                    </IconButton>
+                  </Tooltip>
+                ) : (
+                  <Button
+                    key={index}
+                    color="inherit"
+                    onClick={button.onClick}
+                    sx={{
+                      textTransform: 'none',
+                      fontWeight: 500,
+                      color: '#fffefa',
+                      borderRadius: 1,
+                      '&:hover': {
+                        bgcolor: 'rgba(255, 255, 255, 0.1)',
+                      },
+                    }}
+                  >
+                    {button.label}
+                  </Button>
+                )
+              )}
             </Box>
           </Toolbar>
         </AppBar>
@@ -178,13 +206,13 @@ const ChatWindow = ({
               '& .MuiOutlinedInput-root': {
                 borderRadius: 2,
                 '& fieldset': {
-                  borderColor: '#233a46',
+                  borderColor: '#e0e0e0',
                 },
                 '&:hover fieldset': {
-                  borderColor: '#233a46',
+                  borderColor: '#e0e0e0',
                 },
                 '&.Mui-focused fieldset': {
-                  borderColor: '#233a46',
+                  borderColor: '#e0e0e0',
                 },
               },
               '& .MuiInputBase-input': {

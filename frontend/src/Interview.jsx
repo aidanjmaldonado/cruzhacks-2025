@@ -3,7 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { AppContext } from './Contexts/AppContext';
 import ChatWindow from './Common/ChatWindow';
 import * as api from './chatService';
-import {AppBar} from '@mui/material';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+
+// import {AppBar} from '@mui/material';
+import PersonIcon from '@mui/icons-material/Person';
 import AppHeader from './Common/NavBar';
 
 const StandardChat = () => {
@@ -96,10 +99,16 @@ const StandardChat = () => {
         isSending={isSending}
         additionalButtons={[
           {
-            label: 'change user',
+            icon: <ChatBubbleOutlineIcon />,
+            tooltip: 'New Conversation',
+            onClick: () => window.location.reload(),
+          },
+          {
+            icon: <PersonIcon />,
+            tooltip: 'Change User',
             onClick: handleClearLocal,
           },
-        ]}
+        ]}        
       />      
     </React.Fragment>
   );

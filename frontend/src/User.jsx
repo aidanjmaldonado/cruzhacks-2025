@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import ChatWindow from './Common/ChatWindow';
 import AppHeader from './Common/NavBar';
 import * as api from './chatService';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
 const LocalChat = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
@@ -89,7 +90,7 @@ const LocalChat = () => {
       <AppHeader />
       <ChatWindow
         sessionId={sessionId}
-        name={''}
+        name={name}
         messages={messages}
         input={input}
         setInput={setInput}
@@ -99,7 +100,8 @@ const LocalChat = () => {
         isSending={isSending}
         additionalButtons={[
           {
-            label: 'Reset Messages',
+            icon: <ChatBubbleOutlineIcon />,
+            tooltip: 'Reset Messages',
             onClick: handleResetMessages,
           },
         ]}
