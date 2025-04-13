@@ -37,17 +37,14 @@ class SubmitPayload(BaseModel):
 try:
     client = AsyncIOMotorClient(
         "mongodb+srv://aijmaldo:7Bk3rNMQHpcMHDpF@interviewcluster.coi67ff.mongodb.net/?retryWrites=true&w=majority&appName=interviewCluster",
-        serverSelectionTimeoutMS=5000
+        serverSelectionTimeoutMS=20000
     )
     # Test the connection
     client.admin.command('ping')
     print("Connected successfully to MongoDB")
 except Exception as e:
     print(f"MongoDB connection error: {e}")
-    # Fallback to local file-based storage for development
-    print("Using local file storage as fallback")
 
-# client = AsyncIOMotorClient("mongodb+srv://aijmaldo:7Bk3rNMQHpcMHDpF@interviewcluster.coi67ff.mongodb.net/?retryWrites=true&w=majority&appName=interviewCluster")
 db = client["interviews-db"]
 collection = db["interviews"]
 
