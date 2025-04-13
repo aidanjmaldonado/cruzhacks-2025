@@ -7,14 +7,14 @@ class InitialResponse {
     action "TO_INITIAL" | "TO_SHARING" @description("decide weather to stay in the initial state, or to progress to the sharing state")
     name string? @description(#"if the user gives you their first name, put it here. if you do not know, write "Anon""#)
     explain_reasoning_to_rallie string @description("in order to meet Rallie and the user's needs, I need to assess the state of the conversation. This will be logged")
-    message_draft string @description("I need to draft a reply to the user. This draft should be loose, and I need to let myself be free to put down more words then necessary. I need to trust that I will refine them later. I need to be long winded and rambling here, and to explore various angles")
-    message_critique string @description("I need to think about the draft, and how it fits given the current context, as well as if it is too much of a wall of text. If it's too long, I need to consider splitting it into multiple paragraphs. I also need to consider how open ended my questions are - I want to balance asking specific questions with leaving room for the user to tell me more details. I also need to ensure that I decide what to cut, in order to keep my final reply to no more than 80 words")
-    message string @description("I need to write my final reply to the user.")
-    previous_user_message_topic string @description(#"
+    message_draft string @description("I need to draft a reply to the user. This draft should be loose, and I need to let myself be free to put down more words then necessary. I need to trust that I will refine them later. I need to be long winded and rambling here, and to explore various angles.")
+    message_critique string @description("I need to think about the draft, and how it fits given the current context, as well as if it is too much of a wall of text. If it's too long, I need to consider splitting it into multiple paragraphs. I also need to consider how open ended my questions are - I want to balance asking specific questions with leaving room for the user to tell me more details. I also need to ensure that I decide what to cut, in order to keep my final reply to no more than 80 words, and decide where I want to insert line breaks. I want my messages to be spaced nicely. I should use \n for linebreaks where applicable")
+    message string @description("I need to write my final reply to the user. I need to keep my reply to 80 words")
+    previous_user_message_topic string? @description(#"
         Rallie needs to know the topic of the user's previous message for their data pipeline. I need to this brief, about 1 - 5 words. What question did the user answer?
     "#)
     topic_critique string @description("I need to make the topic more descriptive of the context, and especially consider what is the most important thing future students could learn from. The topic should be as specific and brief as possible.")
-    final_topic string @description("the final version of the topic")
+    final_topic string? @description("the final version of the topic")
 
 }
 
@@ -23,13 +23,13 @@ class SharingResponse {
     name string? @description(#"if the user gives you their first name, put it here. if you do not know, write "Anon""#)
     explain_reasoning_to_rallie string @description("in order to meet Rallie and the user's needs, I need to assess the state of the conversation. This will be logged")
     message_draft string @description("I need to draft a reply to the user. This draft should be loose, and I need to let myself be free to put down more words then necessary. I need to trust that I will refine them later. I need to be long winded and rambling here, and to explore various angles")
-    message_critique string @description("I need to think about the draft, and how it fits given the current context, as well as if it is too much of a wall of text. If it's too long, I need to consider splitting it into multiple paragraphs. I also need to consider how open ended my questions are - I want to balance asking specific questions with leaving room for the user to tell me more details")
-    message string @description("I need to write my final reply to the user.")
-    previous_user_message_topic string @description(#"
+    message_critique string @description("I need to think about the draft, and how it fits given the current context, as well as if it is too much of a wall of text. If it's too long, I need to consider splitting it into multiple paragraphs. I also need to consider how open ended my questions are - I want to balance asking specific questions with leaving room for the user to tell me more details. I also need to ensure that I decide what to cut, in order to keep my final reply to no more than 80 words, and decide where I want to insert line breaks. I want my messages to be spaced nicely. I should and use \n for linebreaks where applicable")
+    message string @description("I need to write my final reply to the user. I need to keep my reply to 80 words")
+    previous_user_message_topic string? @description(#"
         Rallie needs to know the topic of the user's previous message for their data pipeline. I need to this brief, about 1 - 5 words. What question did the user answer?
     "#)
     topic_critique string @description("I need to make the topic more descriptive of the context, and especially consider what is the most important thing future students could learn from. The topic should be as specific and brief as possible.")
-    final_topic string @description("the final version of the topic")
+    final_topic string? @description("the final version of the topic")
 
 }
 

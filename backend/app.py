@@ -88,9 +88,9 @@ async def start_interview(user_auth: Annotated[Optional[str], Header(alias="User
 
     # Initial question:
     if not user_auth:
-        initial_question = "Hi, I'm Hazel. What would you like for me to refer to you as?"
+        initial_question = """Hi there!\nMy name is Hazel, and I'm gathering stories from UCSC students. What's your name?\nI work with Rallie, and we aim to understand and improve UCSC's systems for students. Are you comfortable with me using your stories, noting that they may not be anonymized initially? Our goal is to build a chatbot that helps students navigate challenges."""
     else:
-        initial_question = f"Hi, {name}, what would you like to talk about today?"
+        initial_question = f"Hi {name}! I really appreciate you being willing to talk to me. To get us started, could you tell me about a time you felt particularly frustrated while navigating something at UCSC? What specifically was the issue, and what steps did you take to resolve it?"
 
     # Generate unique Session ID
     session_ID = result.inserted_id

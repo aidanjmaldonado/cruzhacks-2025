@@ -47,9 +47,9 @@ class InitialResponse(BaseModel):
     message_draft: str
     message_critique: str
     message: str
-    previous_user_message_topic: str
+    previous_user_message_topic: Optional[str] = None
     topic_critique: str
-    final_topic: str
+    final_topic: Optional[str] = None
 
 class Message(BaseModel):
     role: str
@@ -74,6 +74,6 @@ class SharingResponse(BaseModel):
     message_draft: str
     message_critique: str
     message: str
-    previous_user_message_topic: str
+    previous_user_message_topic: Optional[str] = None
     topic_critique: str
-    final_topic: str
+    final_topic: Optional[str] = None
