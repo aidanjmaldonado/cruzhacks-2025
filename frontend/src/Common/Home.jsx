@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Button, CircularProgress, Paper } from '@mui/material';
 import * as api from '../chatService';
 import { AppContext } from '../Contexts/AppContext';
+import AppHeader from './NavBar';
+// import bgIMG from '../assets/backgroundIMG'
 // import loadingAnimation from '../Animations/loading';
 
 const Home = () => {
@@ -40,23 +42,28 @@ const Home = () => {
   };
 
   return (
+    <React.Fragment>
+      <AppHeader />
     <Box
+      
       sx={{
         maxWidth: 600,
         margin: 'auto',
-        mt: 8,
+        mt: 5,
         px: 3,
+        p: 5,
         textAlign: 'center',
         position: 'relative',
         minHeight: '80vh',
+        bgcolor: 'background.secondary',
       }}
     >
-      <Typography variant="h4" gutterBottom sx={{ mb: 4 }}>
+      <Typography color="primary" variant="h4" gutterBottom sx={{ mb: 4 }}>
         Share Your UCSC Story with Hazel
       </Typography>
       
       <Box sx={{ mb: 5 }}>
-        <Typography variant="body1" color="textSecondary" paragraph sx={{ mb: 3 }}>
+        <Typography variant="body1" color="secondary" paragraph sx={{ mb: 3 }}>
           Hazel is our automated interviewer here at Rallie.tech. She specializes in gathering 
           stories about navigating bureaucratic systems at UCSC. When you chat with Hazel, she'll ask open-ended questions to help understand your unique 
           perspective. Your stories help Rallie build our knowledgebase, and offer support to other students from real experiences 
@@ -73,7 +80,7 @@ const Home = () => {
         px: 3
       }}>
         {/* Disclaimer */}
-        <Box sx={{ mb: 4, p: 2, bgcolor: '#f5f5f5', borderRadius: 2 }}>
+        <Box sx={{ mb: 4, p: 2, bgcolor: 'background.bright', borderRadius: 2 }}>
           <Typography variant="body2" color="textSecondary">
             Note: Knowledge and stories shared here will be shared publically
           </Typography>
@@ -99,6 +106,7 @@ const Home = () => {
         </Button>
       </Box>
     </Box>
+    </React.Fragment>
   );
 };
 

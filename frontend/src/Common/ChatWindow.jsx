@@ -1,7 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
-import { AppContext } from '../Contexts/AppContext';
-import { useNavigate } from 'react-router-dom';
-import TypingAnimation from '../Animations/model_typing';
+import React, { useEffect, useRef } from 'react';
 import {
   Box,
   Typography,
@@ -14,100 +11,26 @@ import {
   AppBar,
   Toolbar,
   Divider,
-  CircularProgress
 } from '@mui/material';
-// import SendIcon from '@mui/icons-material/Send';
-import * as api from '../chatService';
+import TypingAnimation from '../Animations/model_typing';
 
-const ChatWindow = () => {
-  const {messages, setMessages, name, setName, session_ID} = useContext(AppContext);
-  const [input, setInput] = useState('');
-  // const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const navigate = useNavigate();
+const ChatWindow = ({
+  sessionId,
+  name,
+  messages,
+  input,
+  setInput,
+  handleSend,
+  handleKeyPress,
+  error,
+  isSending,
+  additionalButtons = [],
+}) => {
   const messagesEndRef = useRef(null);
-  const [isSending, setIsSending] = useState(false);
-  // New useEffect to log on mount (triggered on refresh)
-  useEffect(() => {
-    if(!session_ID){
-      console.log("ChatWindow mounted on refresh");
-      navigate(`/chat/`);
-    }
-   
-  }, []); // Empty dependency array ensures it runs only on mount
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
-
-  const submitAnswer = async (answer) => {
-    const lastQuestion = messages.findLast((msg) => msg.sender === 'bot')?.text || '';
-    try {
-      // Add the user's message immediately
-      setMessages((prev) => [
-        ...prev,
-        {
-          text: answer,
-          sender: 'student',
-          timestamp: new Date().toLocaleTimeString(),
-        }
-      ]);
-      
-      // isSending state is already true at this point from handleSend
-      
-      // Optional: Add a small delay to make the typing animation visible
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Get response from API
-      const res = await api.submitAnswer(lastQuestion, answer, session_ID);
-      
-      // Add the bot's response
-      setMessages((prev) => [
-        ...prev,
-        {
-          text: res.next_question || 'No more questions',
-          sender: 'bot',
-          timestamp: new Date().toLocaleTimeString(),
-        },
-      ]);
-      
-      setName(res.name);
-    } catch (error) {
-      console.error('Failed to submit answer:', error);
-      setError('Failed to submit answer. Please try again.');
-    }
-    // isSending will be set to false in the finally block of handleSend
-  };
-  
-  const handleSend = async () => {
-    if (!input.trim() || isSending) return;
-    
-    setError(null);
-    setIsSending(true); // Disable the button while sending
-    
-    try {
-      await submitAnswer(input);
-      setInput('');
-    } catch (error) {
-      console.error('Failed to submit answer:', error);
-      setError('Failed to submit answer. Please try again.');
-    } finally {
-      setIsSending(false); // Re-enable the button
-    }
-  };
-
-  const handleClearLocal = () => {
-    localStorage.clear();
-    navigate(`/chat/`);
-  }
-
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
-    }
-  };
-
-
 
   if (error) {
     return (
@@ -115,7 +38,7 @@ const ChatWindow = () => {
         <Typography color="error">{error}</Typography>
         <Button
           variant="contained"
-          onClick={() => navigate('/')}
+          onClick={() => window.location.href = '/'}
           sx={{ mt: 2 }}
         >
           Go Home
@@ -125,10 +48,16 @@ const ChatWindow = () => {
   }
 
   return (
-    session_ID && <Box
+    sessionId && (
+      <Box
       sx={{
-        maxWidth: 600,
-        height: 500,
+        width: {
+          xs: '90vw',  // default for extra-small screens and up
+          md: '80vw',
+          lg: '65vw',
+          // lg: '1200px' // max width for large screens and above
+        },
+        height: '80vh',
         margin: 'auto',
         mt: 5,
         display: 'flex',
@@ -136,96 +65,104 @@ const ChatWindow = () => {
         border: '1px solid #e0e0e0',
         borderRadius: 2,
         overflow: 'hidden',
+        bgcolor: 'background.secondary',
       }}
-    >
-      <AppBar position="static" color="primary">
-        <Toolbar>
-          <Typography variant="h6">
-            Chat with {name || ''} (Session: {session_ID.slice(0, 8)})
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      {error && (
-        <Typography color="error" sx={{ p: 2 }}>
-          {error}
-        </Typography>
-      )}
-      <Box
-        sx={{
-          flexGrow: 1,
-          overflowY: 'auto',
-          p: 2,
-          backgroundColor: '#f5f5f5',
-        }}
       >
-        <List>
-          {messages.map((message, index) => (
-            <ListItem
-              key={index}
-              sx={{
-                justifyContent:
-                  message.sender === 'student' ? 'flex-end' : 'flex-start',
-              }}
-            >
-              <Paper
-                elevation={1}
+        <AppBar position="static" color="primary">
+          <Toolbar>
+          <Typography variant="h6">
+            {name ? `Chat with ${name}` : 'Hazel'} (Session: {sessionId.slice(0, 8)})
+          </Typography>
+
+          </Toolbar>
+        </AppBar>
+        {error && (
+          <Typography color="error" sx={{ p: 2 }}>
+            {error}
+          </Typography>
+        )}
+        <Box
+          sx={{
+            flexGrow: 1,
+            overflowY: 'auto',
+            p: 2,
+          }}
+        >
+          <List>
+            {messages.map((message, index) => (
+              <ListItem
+                key={index}
                 sx={{
-                  maxWidth: '70%',
-                  p: 1,
-                  backgroundColor:
-                    message.sender === 'student' ? '#1976d2' : '#ffffff',
-                  color: message.sender === 'student' ? '#ffffff' : '#000000',
-                  borderRadius: 2,
+                  justifyContent:
+                    message.sender === 'user' ? 'flex-end' : 'flex-start',
                 }}
               >
-                <ListItemText
-                  primary={message.text}
-                  secondary={message.timestamp}
-                  secondaryTypographyProps={{
-                    color: message.sender === 'student' ? '#e0e0e0' : '#757575',
+                <Paper
+                  elevation={1}
+                  sx={{
+                    maxWidth: '70%',
+                    p: 1,
+                    backgroundColor:
+                      message.sender === 'user' ? 'background.sender' : 'background.bright',
+                    color: message.sender === 'user' ? '#fffefa' : 'background.sender',
+                    borderRadius: 2,
                   }}
-                />
-              </Paper>
-            </ListItem>
-          ))}
-          <div ref={messagesEndRef} />
-          {isSending && (
-            <ListItem sx={{ justifyContent: 'flex-start' }}>
-              <TypingAnimation />
-            </ListItem>
-          )}
-        </List>
+                >
+                  <ListItemText
+                    primary={message.text}
+                    primaryTypographyProps={{
+                      color: message.sender === 'user' ? '#fffefa' : '#000000',
+                    }}
+                    secondary={message.timestamp}
+                    secondaryTypographyProps={{
+                      color: message.sender === 'user' ? '#e0e0e0' : '#757575',
+                    }}
+                  />
+                </Paper>
+              </ListItem>
+            ))}
+            <div ref={messagesEndRef} />
+            {isSending && (
+              <ListItem sx={{ justifyContent: 'flex-start' }}>
+                <TypingAnimation />
+              </ListItem>
+            )}
+          </List>
+        </Box>
+        <Divider />
+        <Box sx={{ p: 2, display: 'flex', gap: 1 }}>
+          <TextField
+            fullWidth
+            variant="outlined"
+            placeholder="Type your message..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyPress={handleKeyPress}
+            multiline
+            maxRows={3}
+            disabled={isSending}
+            sx={{
+              '& .MuiInputBase-input': {
+                fontSize: 16,
+              },
+            }}
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSend}
+            disabled={!input.trim() || isSending}
+          >
+            {isSending ? 'Sending...' : 'Send'}
+          </Button>
+        </Box>
+        {additionalButtons.map((button, index) => (
+          <Button key={index} onClick={button.onClick}>
+            {button.label}
+          </Button>
+        ))}
       </Box>
-      <Divider />
-      <Box sx={{ p: 2, display: 'flex', gap: 1 }}>
-        <TextField
-          fullWidth
-          variant="outlined"
-          placeholder="Type your message..."
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyPress={handleKeyPress}
-          multiline
-          maxRows={3}
-          disabled={isSending}
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          // endIcon={isSending ? <CircularProgress size={20} color="inherit" /> : <SendIcon />}
-          onClick={handleSend}
-          disabled={!input.trim() || isSending}
-        >
-          {isSending ? 'Sending...' : 'Send'}
-        </Button>
-      </Box>
-      <Button
-        onClick={handleClearLocal}
-      >
-        
-        {'clear cache'}
-      </Button>
-    </Box>
+    )
   );
 };
 

@@ -1,17 +1,23 @@
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import Home from './Common/Home'; // New component to handle sessionId fetch
-import ChatWindow from './Common/ChatWindow';
+import Interview from './Interview';
 import ErrorPage from './Common/ErrorPage'; // Optional: for error handling
 import AppContextProvider from './Contexts/AppContext';
 import Credits from './Common/Credits';
+import User from './User';
+import AppHeader from './Common/NavBar';
 const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <User></User>
+  },
   {
     path: '/chat',
     element: <Home />, // Fetches sessionId and navigates
   },
   {
     path: '/chat/:sessionId',
-    element: <ChatWindow />,
+    element: <Interview />,
   },
   {
     path: '/error',
@@ -20,7 +26,7 @@ const router = createBrowserRouter([
   // Fallback for unmatched routes
   {
     path: '*',
-    element: <Navigate to="/chat" replace />,
+    element: <Navigate to="/" replace />,
   },
   {
     path: '/credits',
@@ -30,7 +36,9 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-  <AppContextProvider><RouterProvider router={router} /></AppContextProvider>)
+  <AppContextProvider>
+    <RouterProvider router={router} />
+    </AppContextProvider>)
   
 }
 
