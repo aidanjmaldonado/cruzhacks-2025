@@ -210,4 +210,3 @@ async def submit_answer(payload: SubmitPayloadPrompt):
 
     # Return next question to client    
     return {"answer": answer}
-'''
