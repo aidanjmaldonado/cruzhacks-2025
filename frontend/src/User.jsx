@@ -25,7 +25,7 @@ const LocalChat = () => {
     setMessages(updatedMessages);
   
     // Call API with the full updated message list
-    const res = await api.submitAnswerPrompt(updatedMessages, sessionId);
+    const res = await api.submitAnswerPrompt(updatedMessages);
     console.log(res);
   
     // Add the bot's response
@@ -41,7 +41,7 @@ const LocalChat = () => {
   useEffect(() => {
     setMessages([
       {
-        text: 'Hi what are your issues i am here to help',
+        text: 'Hello! What can I help you with today?',
         sender: 'Hazel',
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       }
@@ -75,7 +75,7 @@ const LocalChat = () => {
   const handleResetMessages = () => {
     setMessages([
       {
-        text: 'Hi what are your issues i am here to help',
+        text: 'Hello! What can I help you with today?',
         sender: 'Hazel',
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       }

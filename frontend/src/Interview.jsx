@@ -96,7 +96,7 @@ const StandardChat = () => {
         isSending={isSending}
         additionalButtons={[
           {
-            label: 'Clear Cache',
+            label: 'change user',
             onClick: handleClearLocal,
           },
         ]}

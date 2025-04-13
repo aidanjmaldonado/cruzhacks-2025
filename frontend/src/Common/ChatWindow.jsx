@@ -30,11 +30,21 @@ const ChatWindow = ({
   additionalButtons = [],
 }) => {
   const messagesEndRef = useRef(null);
+  const inputRef = useRef(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
-
+  useEffect(() => {
+    if (!isSending) {
+      inputRef.current?.focus();
+    }
+  }, [isSending]);
+  
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+  
   if (error) {
     return (
       <Box sx={{ textAlign: 'center', mt: 5 }}>
@@ -72,13 +82,20 @@ const ChatWindow = ({
       }}
       >
         <AppBar position="static" color="primary">
-          <Toolbar>
-          <Typography variant="h6">
-            {name ? `Chat with ${name}` : 'Hazel'} (Session: {sessionId.slice(0, 8)})
-          </Typography>
-
+          <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Typography variant="h6">
+              {name ? `Chat with ${name}` : 'Hazel'}
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              {additionalButtons.map((button, index) => (
+                <Button key={index} color="inherit" onClick={button.onClick}>
+                  {button.label}
+                </Button>
+              ))}
+            </Box>
           </Toolbar>
         </AppBar>
+
         {error && (
           <Typography color="error" sx={{ p: 2 }}>
             {error}
@@ -135,6 +152,7 @@ const ChatWindow = ({
         <Divider />
         <Box sx={{ p: 2, display: 'flex', gap: 1 }}>
           <TextField
+            inputRef={inputRef}
             fullWidth
             variant="outlined"
             placeholder="Type your message..."
@@ -159,11 +177,6 @@ const ChatWindow = ({
             {isSending ? 'Sending...' : 'Send'}
           </Button>
         </Box>
-        {additionalButtons.map((button, index) => (
-          <Button key={index} onClick={button.onClick}>
-            {button.label}
-          </Button>
-        ))}
       </Box>
     )
   );
