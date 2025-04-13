@@ -57,7 +57,7 @@ export default function Credits() {
           </Typography>
           <Grid container spacing={10} justifyContent="center">
             {columns.map((column, colIndex) => (
-              <Grid item xs={12} sm={4} key={colIndex}>
+              <Grid sx = {{xs:12, sm:4}} key={colIndex}>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                   {column.map((name, index) => (
                     <Typography

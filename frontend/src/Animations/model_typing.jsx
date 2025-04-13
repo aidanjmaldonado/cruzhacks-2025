@@ -1,7 +1,7 @@
 // In your ../Animations/typing.js file (or create it if it doesn't exist)
 
 import React from 'react';
-import { Box, CircularProgress } from '@mui/material';
+import { Box } from '@mui/material';
 
 const TypingAnimation = () => {
   return (

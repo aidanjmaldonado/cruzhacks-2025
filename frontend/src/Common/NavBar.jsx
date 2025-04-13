@@ -90,7 +90,7 @@ const AppHeader = () => {
         </Typography>
         <Box sx={{ display: 'flex', gap: { xs: 2, sm: 3 } }}>
           {navButton('Home', 'home', '/', HomeIcon)}
-          {navButton('Interview', 'chat', '/chat', ChatIcon)}
+          {navButton('Share Experience', 'chat', '/chat', ChatIcon)}
           {navButton('Credits', 'credits', '/credits', InfoIcon)}
         </Box>
       </Toolbar>

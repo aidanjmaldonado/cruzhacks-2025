@@ -11,7 +11,6 @@ const LocalChat = () => {
   const [isSending, setIsSending] = useState(false);
   // const [name] = useState('Local Bot');
   const sessionId = 'local-session-123'; // Mock session ID
-  const navigate = useNavigate();
   const submitAnswer = async (answer) => {
     const userMessage = {
       text: answer,
@@ -42,7 +41,7 @@ const LocalChat = () => {
   useEffect(() => {
     setMessages([
       {
-        text: 'Hello! What can I help you with today?',
+        text: 'Hello! We are Rallie.tech, a student-run organization that helps students navigate bureaucratic systems at UCSC. What can I help you with today?',
         sender: 'Hazel',
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       }
@@ -76,7 +75,7 @@ const LocalChat = () => {
   const handleResetMessages = () => {
     setMessages([
       {
-        text: 'Hello! What can I help you with today?',
+        text: 'Hello! We are Rallie.tech, a student-run organization that helps students navigate bureaucratic systems at UCSC. What can I help you with today?',
         sender: 'Hazel',
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       }
@@ -101,7 +100,7 @@ const LocalChat = () => {
         additionalButtons={[
           {
             icon: <ChatBubbleOutlineIcon />,
-            tooltip: 'Reset Messages',
+            tooltip: 'New Conversation',
             onClick: handleResetMessages,
           },
         ]}

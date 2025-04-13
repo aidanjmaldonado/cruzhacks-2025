@@ -105,7 +105,7 @@ const StandardChat = () => {
           },
           {
             icon: <PersonIcon />,
-            tooltip: 'Change User',
+            tooltip: 'New User',
             onClick: handleClearLocal,
           },
         ]}        
