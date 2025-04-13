@@ -95,6 +95,11 @@ const ChatWindow = () => {
     }
   };
 
+  const handleClearLocal = () => {
+    localStorage.clear();
+    navigate(`/chat/`);
+  }
+
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -214,6 +219,12 @@ const ChatWindow = () => {
           {isSending ? 'Sending...' : 'Send'}
         </Button>
       </Box>
+      <Button
+        onClick={handleClearLocal}
+      >
+        
+        {'clear cache'}
+      </Button>
     </Box>
   );
 };
