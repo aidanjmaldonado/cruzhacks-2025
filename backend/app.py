@@ -1,4 +1,5 @@
 from hazel import Hazel
+from nut import Nut
 from fastapi import FastAPI, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -37,6 +38,9 @@ class StartPayload(BaseModel):
 class SubmitPayload(BaseModel):
     question: str
     answer: str
+
+class SubmitPayloadPrompt(BaseModel):
+    chat: list
 
 # Connect to MongoDB TO-DO
 try:
@@ -189,46 +193,21 @@ async def submit_answer(session_ID, payload: SubmitPayload, user_auth: Annotated
     return {"next_question": next_question, "name": updated_name}
     # return {"next_question": next_question, "name": "name"}
 
-'''
-@app.get("/interviews/{name}") # Not really necessary if we're not ever filtering by User
-async def get_interview(name: str, interview_number: Optional[int] = None):
-    # If interview number is provided, get that specific interview
-    if interview_number:
-        interview = await collection.find_one({
-            "name": name,
-            "interview_number": interview_number
-        })
-        if not interview:
-            raise HTTPException(status_code=404, detail=f"Interview {interview_number} not found for {name}.")
-        # Convert MongoDB _id to string for JSON serialization
-        interview["_id"] = str(interview["_id"])
-        return interview
-    
-    # Otherwise, get the latest interview
-    latest_interview = await collection.find_one(
-        {"name": name},
-        sort=[("interview_number", -1)]
-    )
-    
-    if not latest_interview:
-        raise HTTPException(status_code=404, detail=f"No interviews found for {name}.")
-    
-    # Convert MongoDB _id to string for JSON serialization
-    latest_interview["_id"] = str(latest_interview["_id"])
-    return latest_interview
+@app.post("/prompt")
+async def submit_answer(payload: SubmitPayloadPrompt):
 
-@app.get("/interviews/{name}/all")
-async def get_all_interviews(name: str):
-    # Retrieve all interviews for this user
-    cursor = collection.find({"name": name}).sort("interview_number", 1)
-    interviews = await cursor.to_list(length=100)  # Adjust the length based on expected maximum
-    
-    if not interviews:
-        raise HTTPException(status_code=404, detail=f"No interviews found for {name}.")
-    
-    # Convert MongoDB _id to string for JSON serialization
-    for interview in interviews:
-        interview["_id"] = str(interview["_id"])
-    
-    return interviews
+    # Activate key
+    load_dotenv()
+
+    # Formulate context for RAG injection
+    additional_context = [entry["text"] for entry in payload.chat]
+    nut = Nut(additional_context[:-1])
+
+    # Generate next quesiton
+    answer = nut.prompt(additional_context[-1])
+
+    print(answer)
+
+    # Return next question to client    
+    return {"answer": answer}
 '''
