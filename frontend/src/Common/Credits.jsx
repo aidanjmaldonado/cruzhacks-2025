@@ -1,80 +1,42 @@
-import React from 'react';
-import credits from '../../credits.json'; // Verify this path
-import { Box, Typography, List, ListItem, ListItemText, Container } from '@mui/material';
+// src/Common/Credits.jsx
+import React from "react";
+import { Container, Typography, Grid, Box } from "@mui/material";
+import names from "../credits.json";
 
-const CreditsPage = () => {
-  // Debug logs to check data
-  console.log('CreditsPage rendered');
-  console.log('credits:', credits);
-  console.log('credits.names:', credits.names);
+const nameList = names.names;
 
-  // Fallback if credits.names is not an array
-  const names = Array.isArray(credits.names) ? credits.names : [];
+export default function Credits() {
+  // Split names into three roughly equal columns
+  const columnCount = 3;
+  const namesPerColumn = Math.ceil(nameList.length / columnCount);
+  const columns = [
+    nameList.slice(0, namesPerColumn),
+    nameList.slice(namesPerColumn, 2 * namesPerColumn),
+    nameList.slice(2 * namesPerColumn),
+  ];
 
   return (
-    <Container
-      maxWidth={false}
-      sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        p: 0,
-        m: 0,
-      }}
-    >
-      <Box
-        sx={{
-          flex: 1,
-          overflowY: 'auto',
-          p: 4,
-        }}
-      >
-        <Typography
-          variant="h4"
-          gutterBottom
-          sx={{
-            textAlign: 'center',
-            mb: 4,
-          }}
-        >
-          Credits
-        </Typography>
-        {names.length === 0 ? (
-          <Typography sx={{ textAlign: 'center', color: 'red' }}>
-            No credits data available. Check credits.json.
-          </Typography>
-        ) : (
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: {
-                xs: '1fr',
-                sm: '1fr 1fr',
-                md: '1fr 1fr 1fr',
-              },
-              gap: 2,
-              maxWidth: '1200px',
-              mx: 'auto',
-            }}
-          >
-            {names.map((name, index) => (
-              <List
-                key={index}
-                sx={{
-                  p: 0,
-                  textAlign: 'center',
-                }}
-              >
-                <ListItem sx={{ justifyContent: 'center' }}>
-                  <ListItemText primary={name} />
-                </ListItem>
-              </List>
-            ))}
-          </Box>
-        )}
-      </Box>
+    <Container sx={{ py: 4 }}>
+      <Typography variant="h4" component="h1" gutterBottom align="center" sx={{ fontWeight: "bold", mb: 4 }}>
+        Credits
+      </Typography>
+      <Grid container spacing={3}>
+        {columns.map((column, colIndex) => (
+          <Grid size={{xs:12, sm:4}} key={colIndex}>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+              {column.map((name, index) => (
+                <Typography
+                  key={`${colIndex}-${index}`}
+                  variant="body1"
+                  sx={{ fontSize: "1.125rem", color: "text.primary" }}
+                >
+                  {name}
+                </Typography>
+              ))}
+            </Box>
+          </Grid>
+        ))}
+      </Grid>
     </Container>
   );
-};
-
-export default CreditsPage;
+}
