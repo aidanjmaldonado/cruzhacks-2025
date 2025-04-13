@@ -67,3 +67,36 @@ export async function submitAnswer(q, ans, chatId) {
     throw error;
   }
 }
+
+export async function submitAnswerPrompt(messages) {
+  
+  try {
+    console.log('Submitting to:', `${BASE_URL}/prompt`);
+    console.log(JSON.stringify(messages))
+    const response = await fetch(`${BASE_URL}/prompt`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        // Authorization: `Bearer ${userToken}`,
+      },
+      body: JSON.stringify({
+        chat: messages,
+      })
+      
+      
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to submit Q/A: ${response.statusText}`);
+    }
+    const data = await response.json();
+    console.log(data);
+    if (!data.answer) {
+      throw new Error('Invalid response structure from submitAnswer');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error submitting Q/A:', error);
+    throw error;
+  }
+}
