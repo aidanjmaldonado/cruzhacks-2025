@@ -42,7 +42,14 @@ def all_succeeded(checks: Dict[CheckName, Check]) -> bool:
 
 class InitialResponse(BaseModel):
     action: Union[Literal["TO_INITIAL"], Literal["TO_SHARING"]]
+    name: Optional[str] = None
+    explain_reasoning_to_rallie: str
+    message_draft: str
+    message_critique: str
     message: str
+    previous_user_message_topic: str
+    topic_critique: str
+    final_topic: str
 
 class Message(BaseModel):
     role: str
@@ -60,8 +67,12 @@ class Resume(BaseModel):
     experience: List[str]
     skills: List[str]
 
-class SharingTool(BaseModel):
-    action: Literal["sharing"]
-
-class WrapUpTool(BaseModel):
-    action: Literal["wrap_up"]
+class SharingResponse(BaseModel):
+    action: Literal["TO_SHARING"]
+    explain_reasoning_to_rallie: str
+    message_draft: str
+    message_critique: str
+    message: str
+    previous_user_message_topic: str
+    topic_critique: str
+    final_topic: str

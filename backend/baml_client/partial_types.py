@@ -37,7 +37,14 @@ class StreamState(BaseModel, Generic[T]):
 
 class InitialResponse(BaseModel):
     action: Optional[Union[Literal["TO_INITIAL"], Literal["TO_SHARING"]]] = None
+    name: Optional[str] = None
+    explain_reasoning_to_rallie: Optional[str] = None
+    message_draft: Optional[str] = None
+    message_critique: Optional[str] = None
     message: Optional[str] = None
+    previous_user_message_topic: Optional[str] = None
+    topic_critique: Optional[str] = None
+    final_topic: Optional[str] = None
 
 class Message(BaseModel):
     role: Optional[str] = None
@@ -55,8 +62,12 @@ class Resume(BaseModel):
     experience: List[str]
     skills: List[str]
 
-class SharingTool(BaseModel):
-    action: Optional[Literal["sharing"]] = None
-
-class WrapUpTool(BaseModel):
-    action: Optional[Literal["wrap_up"]] = None
+class SharingResponse(BaseModel):
+    action: Optional[Literal["TO_SHARING"]] = None
+    explain_reasoning_to_rallie: Optional[str] = None
+    message_draft: Optional[str] = None
+    message_critique: Optional[str] = None
+    message: Optional[str] = None
+    previous_user_message_topic: Optional[str] = None
+    topic_critique: Optional[str] = None
+    final_topic: Optional[str] = None
