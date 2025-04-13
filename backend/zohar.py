@@ -66,7 +66,7 @@ async def raw_text():
                 for dictionary in interview["conversation"]
                 if "User" in dictionary
             ]
-            all_user_sentences.extend(user_sentences)
+            all_user_sentences.extend(user_sentences[])
         else:
             print(f"Not found or missing conversation: {key}")
     
