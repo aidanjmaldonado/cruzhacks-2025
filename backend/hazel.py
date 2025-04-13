@@ -20,7 +20,6 @@ class Hazel:
         self.last_topic = None
         self.username = None
     def process(self):
-        print(self.state.state)
         match self.state.state:
             case "INITIAL":
                 self.transition = self.state_is_initial()
@@ -39,7 +38,6 @@ class Hazel:
         self.state = State(state=state)
         self.messages = [Message(**msg) for msg in messages]
         self.process()
-        print(self.username)
         return (self.last_message, self.new_state,
                 self.username if hasattr(self, 'username') else None,
                 self.last_topic)

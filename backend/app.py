@@ -145,7 +145,6 @@ async def submit_answer(session_ID, payload: SubmitPayload):
         messages.append({"role": "hazel", "content": message["Hazel"]})
         # Append user message
         messages.append({"role": "user", "content": message["User"]})
-    print(messages)
 
     name = updated_interview.get("name", "Unknown")
 
@@ -155,7 +154,6 @@ async def submit_answer(session_ID, payload: SubmitPayload):
         messages=messages,
         state=("INITIAL" if name == "" else "SHARING")
     )
-    print(updated_name, "XDFUHGYFCGHUGYCFGHUGVHVIHUJVGH")
     # Update Mongo DB with Hazel information
     await collection.update_one(
         {"_id": obj_id},
