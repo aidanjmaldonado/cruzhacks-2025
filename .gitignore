@@ -52,7 +52,4 @@ backend/package.json
 frontend/README.md
 frontend/eslint.config.js
 frontend/package-lock.json
-frontend/package.json
 frontend/public/
-frontend/src/credits.json
-frontend/vite.config.js
