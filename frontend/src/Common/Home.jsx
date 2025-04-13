@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Button, CircularProgress } from '@mui/material';
 import * as api from '../chatService';
 import { AppContext } from '../Contexts/AppContext';
+// import loadingAnimation from '../Animations/loading';
 const Home = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);

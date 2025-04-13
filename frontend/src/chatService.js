@@ -15,6 +15,9 @@ export async function startInterview() {
       throw new Error(`Failed to start interview: ${response.statusText}`);
     }
     const data = await response.json();
+    if(!userToken){
+      localStorage.setItem('userToken', data.userID);
+    }
     console.log(data);
     return data;
   } catch (error) {

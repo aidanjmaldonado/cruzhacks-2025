@@ -96,8 +96,8 @@ const ChatWindow = () => {
   return (
     session_ID && <Box
       sx={{
-        maxWidth: 600,
-        height: 500,
+        maxWidth: 900,
+        height: 700,
         margin: 'auto',
         mt: 5,
         display: 'flex',
@@ -109,9 +109,11 @@ const ChatWindow = () => {
     >
       <AppBar position="static" color="primary">
         <Toolbar>
-          <Typography variant="h6">
-            Chat with {name || ''} (Session: {session_ID.slice(0, 8)})
-          </Typography>
+          {name &&(
+          <Typography variant="h5">
+            Chat with {name || ''} 
+            {/* (Session: {session_ID.slice(0, 8)}) */}
+          </Typography>)}
         </Toolbar>
       </AppBar>
       {error && (
@@ -140,7 +142,9 @@ const ChatWindow = () => {
                 elevation={1}
                 sx={{
                   maxWidth: '70%',
-                  p: 1,
+                  pt: 1,
+                  pl: 3,
+                  pr: 3,
                   backgroundColor:
                     message.sender === 'student' ? '#1976d2' : '#ffffff',
                   color: message.sender === 'student' ? '#ffffff' : '#000000',
@@ -148,12 +152,18 @@ const ChatWindow = () => {
                 }}
               >
                 <ListItemText
-                  primary={message.text}
-                  secondary={message.timestamp}
-                  secondaryTypographyProps={{
-                    color: message.sender === 'student' ? '#e0e0e0' : '#757575',
-                  }}
-                />
+                    primary={message.text}
+                    secondary={message.timestamp}
+                    sx={{
+                      '& .MuiListItemText-primary': {
+                        fontSize: 19, // Font size for primary text
+                      },
+                      '& .MuiListItemText-secondary': {
+                        fontSize: 14, // Font size for secondary text
+                        color: message.sender === 'student' ? '#e0e0e0' : '#757575',
+                      },
+                    }}
+                  />
               </Paper>
             </ListItem>
           ))}
