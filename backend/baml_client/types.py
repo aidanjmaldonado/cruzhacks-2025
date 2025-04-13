@@ -69,6 +69,7 @@ class Resume(BaseModel):
 
 class SharingResponse(BaseModel):
     action: Literal["TO_SHARING"]
+    name: Optional[str] = None
     explain_reasoning_to_rallie: str
     message_draft: str
     message_critique: str

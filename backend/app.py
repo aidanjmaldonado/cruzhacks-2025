@@ -1,3 +1,4 @@
+from hazel import Hazel
 from fastapi import FastAPI, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -138,8 +139,8 @@ async def submit_answer(session_ID, payload: SubmitPayload):
     name = updated_interview.get("name", "Unknown")
 
     # Generate next quesiton
-    '''When Sylvia finishes Hazel
-    next_question, next_state, updated_name = Hazel().get_message(
+    hazel = Hazel()
+    next_question, next_state, updated_name, topic = hazel.get_message(
         state=("INITIAL" if name == "" else "SHARING"),
         conversation=conversation,
         name=name
@@ -154,20 +155,12 @@ async def submit_answer(session_ID, payload: SubmitPayload):
             }
         }
     )
-    ''' 
-    await collection.update_one(
-        {"_id": obj_id},
-        {
-            "$set": {
-                "name": name
-            }
-        }
-    )
-    next_question = "--Call Sylvia's LLM Here: Generate Next Question Based on Prior Convo--"
+
+    # next_question = "--Call Sylvia's LLM Here: Generate Next Question Based on Prior Convo--"
 
     # Return next question to client    
-    # return {"next_question": next_question, "name": updated_name}
-    return {"next_question": next_question, "name": "name"}
+    return {"next_question": next_question, "name": updated_name}
+    # return {"next_question": next_question, "name": "name"}
 
 '''
 @app.get("/interviews/{name}") # Not really necessary if we're not ever filtering by User
