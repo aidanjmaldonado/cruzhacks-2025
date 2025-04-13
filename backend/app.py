@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from typing import Optional, Annotated
 from motor.motor_asyncio import AsyncIOMotorClient
 from bson import ObjectId
+from dotenv import load_dotenv
 import uuid
 import os
 
@@ -104,6 +105,7 @@ async def start_interview(user_auth: Annotated[Optional[str], Header(alias="User
 
 @app.post("/interview/{session_ID}")
 async def submit_answer(session_ID, payload: SubmitPayload):
+    load_dotenv()
 
     # Convert session id into valid string
     try:
@@ -136,16 +138,24 @@ async def submit_answer(session_ID, payload: SubmitPayload):
     # Get updated document to check conversation length
     updated_interview = await collection.find_one({"_id": obj_id})
     conversation = updated_interview["conversation"]
+    messages = []
+    # General procedure
+    for message in conversation:
+        # Append assistant message
+        messages.append({"role": "hazel", "content": message["Hazel"]})
+        # Append user message
+        messages.append({"role": "user", "content": message["User"]})
+    print(messages)
+
     name = updated_interview.get("name", "Unknown")
 
     # Generate next quesiton
     hazel = Hazel()
     next_question, next_state, updated_name, topic = hazel.get_message(
-        state=("INITIAL" if name == "" else "SHARING"),
-        conversation=conversation,
-        name=name
+        messages=messages,
+        state=("INITIAL" if name == "" else "SHARING")
     )
-    
+    print(updated_name, "XDFUHGYFCGHUGYCFGHUGVHVIHUJVGH")
     # Update Mongo DB with Hazel information
     await collection.update_one(
         {"_id": obj_id},

@@ -17,6 +17,8 @@ class Hazel:
         self.transition = None
         self.last_message = None
         self.new_state = None
+        self.last_topic = None
+        self.username = None
     def process(self):
         print(self.state.state)
         match self.state.state:
@@ -33,12 +35,14 @@ class Hazel:
         if self.transition == Transition(transition="TO_SHARING"):
             self.state = State(state="SHARING")
 
-    def get_message(self, messages: List[Message], state: str) -> Tuple[str, State, Optional[str]]:
+    def get_message(self, messages: List[Message], state: str) -> Tuple[str, State, Optional[str], str]:
         self.state = State(state=state)
         self.messages = [Message(**msg) for msg in messages]
         self.process()
+        print(self.username)
         return (self.last_message, self.new_state,
-                self.username if hasattr(self, 'username') else None)
+                self.username if hasattr(self, 'username') else None,
+                self.last_topic)
 
     
     def state_is_initial(self) -> State:
@@ -51,6 +55,10 @@ class Hazel:
             self.name = response.name
 
         self.last_message: str = response.message
+        self.last_topic: str = response.final_topic
+        self.username = response.name
+
+
         # handle side effects - do I need to send anything to the front end?
         # no I do not - state is managed by parent!
         match response.action:
@@ -66,5 +74,7 @@ class Hazel:
         response = b.Sharing(self.messages)
 
         self.last_message: str = response.message
+        self.last_topic: str = response.final_topic
+        self.username = response.name
 
         return Transition(transition="TO_SHARING")
