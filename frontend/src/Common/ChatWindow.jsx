@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { AppContext } from '../Contexts/AppContext';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -18,46 +18,20 @@ import {
 import * as api from '../chatService';
 
 const ChatWindow = () => {
-  const {messages, setMessages, name, setName, session_ID, setSession_ID} = useContext(AppContext);
+  const {messages, setMessages, name, setName, session_ID} = useContext(AppContext);
   const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const messagesEndRef = useRef(null);
-
-  // useEffect(() => {
-  //   const init = async () => {
-  //     try {
-  //       // Optionally re-fetch session data if needed
-  //       const res = await api.startInterview();
-  //       if (res.session_ID !== session_ID) {
-  //         throw new Error('Session ID mismatch');
-  //       }
-  //       setStudentName(res.userId);
-  //       setMessages([
-  //         {
-  //           text: res.initialQuestion,
-  //           sender: 'bot',
-  //           timestamp: new Date().toLocaleTimeString(),
-  //         },
-  //       ]);
-  //     } catch (error) {
-  //       console.error('Failed to initialize chat:', error);
-  //       setError('Failed to initialize chat. Please try again.');
-  //       navigate('/error'); // Redirect on failure
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   if (session_ID) {
-  //     init();
-  //   } else {
-  //     setError('No session ID provided.');
-  //     setLoading(false);
-  //     navigate('/error');
-  //   }
-  // }, [session_ID, navigate]);
-
+  // New useEffect to log on mount (triggered on refresh)
+  useEffect(() => {
+    if(!session_ID){
+      console.log("ChatWindow mounted on refresh");
+      navigate(`/chat/`);
+    }
+   
+  }, []); // Empty dependency array ensures it runs only on mount
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -118,7 +92,7 @@ const ChatWindow = () => {
   }
 
   return (
-    <Box
+    session_ID && <Box
       sx={{
         maxWidth: 600,
         height: 500,
