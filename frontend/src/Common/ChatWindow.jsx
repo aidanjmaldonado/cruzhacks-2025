@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
+import { AppContext } from '../Contexts/AppContext';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Box,
@@ -17,47 +18,45 @@ import {
 import * as api from '../chatService';
 
 const ChatWindow = () => {
-  const [messages, setMessages] = useState([]);
+  const {messages, setMessages, name, setName, session_ID, setSession_ID} = useContext(AppContext);
   const [input, setInput] = useState('');
-  const [studentName, setStudentName] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { sessionId } = useParams(); // Get sessionId from route
   const navigate = useNavigate();
   const messagesEndRef = useRef(null);
 
-  useEffect(() => {
-    const init = async () => {
-      try {
-        // Optionally re-fetch session data if needed
-        const res = await api.startInterview();
-        if (res.sessionId !== sessionId) {
-          throw new Error('Session ID mismatch');
-        }
-        setStudentName(res.userId);
-        setMessages([
-          {
-            text: res.initialQuestion,
-            sender: 'bot',
-            timestamp: new Date().toLocaleTimeString(),
-          },
-        ]);
-      } catch (error) {
-        console.error('Failed to initialize chat:', error);
-        setError('Failed to initialize chat. Please try again.');
-        navigate('/error'); // Redirect on failure
-      } finally {
-        setLoading(false);
-      }
-    };
-    if (sessionId) {
-      init();
-    } else {
-      setError('No session ID provided.');
-      setLoading(false);
-      navigate('/error');
-    }
-  }, [sessionId, navigate]);
+  // useEffect(() => {
+  //   const init = async () => {
+  //     try {
+  //       // Optionally re-fetch session data if needed
+  //       const res = await api.startInterview();
+  //       if (res.session_ID !== session_ID) {
+  //         throw new Error('Session ID mismatch');
+  //       }
+  //       setStudentName(res.userId);
+  //       setMessages([
+  //         {
+  //           text: res.initialQuestion,
+  //           sender: 'bot',
+  //           timestamp: new Date().toLocaleTimeString(),
+  //         },
+  //       ]);
+  //     } catch (error) {
+  //       console.error('Failed to initialize chat:', error);
+  //       setError('Failed to initialize chat. Please try again.');
+  //       navigate('/error'); // Redirect on failure
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   if (session_ID) {
+  //     init();
+  //   } else {
+  //     setError('No session ID provided.');
+  //     setLoading(false);
+  //     navigate('/error');
+  //   }
+  // }, [session_ID, navigate]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -66,7 +65,7 @@ const ChatWindow = () => {
   const submitAnswer = async (answer) => {
     const lastQuestion = messages.findLast((msg) => msg.sender === 'bot')?.text || '';
     try {
-      const res = await api.submitAnswer(studentName, sessionId, lastQuestion, answer);
+      const res = await api.submitAnswer(lastQuestion, answer, session_ID);
       setMessages((prev) => [
         ...prev,
         {
@@ -75,11 +74,12 @@ const ChatWindow = () => {
           timestamp: new Date().toLocaleTimeString(),
         },
         {
-          text: res.question || 'No more questions',
+          text: res.next_question || 'No more questions',
           sender: 'bot',
           timestamp: new Date().toLocaleTimeString(),
         },
       ]);
+      setName(res.name);
     } catch (error) {
       console.error('Failed to submit answer:', error);
       setError('Failed to submit answer. Please try again.');
@@ -100,13 +100,7 @@ const ChatWindow = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <Box sx={{ textAlign: 'center', mt: 5 }}>
-        <Typography>Loading chat...</Typography>
-      </Box>
-    );
-  }
+
 
   if (error) {
     return (
@@ -140,7 +134,7 @@ const ChatWindow = () => {
       <AppBar position="static" color="primary">
         <Toolbar>
           <Typography variant="h6">
-            Chat with {studentName || 'Student'} (Session: {sessionId.slice(0, 8)})
+            Chat with {name || ''} (Session: {session_ID.slice(0, 8)})
           </Typography>
         </Toolbar>
       </AppBar>

@@ -1,6 +1,6 @@
 const BASE_URL = 'http://localhost:8081';
 
-export async function startInterview(studentName = '') {
+export async function startInterview() {
   const userToken = localStorage.getItem('userToken');
   try {
     console.log('Starting interview at:', `${BASE_URL}/interview`);
@@ -10,15 +10,12 @@ export async function startInterview(studentName = '') {
         'Content-Type': 'application/json',
         ...(userToken && { Authorization: `Bearer ${userToken}` }),
       },
-      body: JSON.stringify(studentName ? { studentName } : {}),
     });
     if (!response.ok) {
       throw new Error(`Failed to start interview: ${response.statusText}`);
     }
     const data = await response.json();
-    if (!data.userId || !data.sessionId || !data.initialQuestion) {
-      throw new Error('Invalid response structure from startInterview');
-    }
+    console.log(data);
     return data;
   } catch (error) {
     console.error('Error starting interview:', error);
@@ -26,11 +23,13 @@ export async function startInterview(studentName = '') {
   }
 }
 
-export async function submitAnswer(studentName, chatId, question, answer) {
+export async function submitAnswer(q, ans, chatId) {
   const userToken = localStorage.getItem('userToken');
+
   if (!chatId || !userToken) {
     throw new Error('Missing chatId or userToken');
   }
+  
   try {
     console.log('Submitting to:', `${BASE_URL}/interview/${chatId}`);
     const response = await fetch(`${BASE_URL}/interview/${chatId}`, {
@@ -39,13 +38,17 @@ export async function submitAnswer(studentName, chatId, question, answer) {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${userToken}`,
       },
-      body: JSON.stringify({ studentName, question, answer }),
+      body: JSON.stringify({  
+        question: q,
+        answer: ans,
+        }),
     });
     if (!response.ok) {
       throw new Error(`Failed to submit Q/A: ${response.statusText}`);
     }
     const data = await response.json();
-    if (!data.question) {
+    console.log(data);
+    if (!data.next_question || !data.name) {
       throw new Error('Invalid response structure from submitAnswer');
     }
     return data;
