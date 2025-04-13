@@ -12,9 +12,6 @@ import {
   Toolbar,
   Divider,
 } from '@mui/material';
-// import RefreshIcon from '@mui/icons-material/Refresh';
-// import IconButton from '@mui/material/IconButton';
-
 import TypingAnimation from '../Animations/model_typing';
 
 const ChatWindow = ({
@@ -35,24 +32,27 @@ const ChatWindow = ({
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
   useEffect(() => {
     if (!isSending) {
       inputRef.current?.focus();
     }
   }, [isSending]);
-  
+
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
-  
+
   if (error) {
     return (
-      <Box sx={{ textAlign: 'center', mt: 5 }}>
-        <Typography color="error">{error}</Typography>
+      <Box sx={{ textAlign: 'center', mt: 8 }}>
+        <Typography variant="h6" color="error" gutterBottom>
+          {error}
+        </Typography>
         <Button
           variant="contained"
-          onClick={() => window.location.href = '/'}
-          sx={{ mt: 2 }}
+          onClick={() => (window.location.href = '/')}
+          sx={{ mt: 2, px: 4 }}
         >
           Go Home
         </Button>
@@ -63,32 +63,38 @@ const ChatWindow = ({
   return (
     sessionId && (
       <Box
-      sx={{
-        width: {
-          xs: '90vw',  // default for extra-small screens and up
-          md: '80vw',
-          lg: '65vw',
-          // lg: '1200px' // max width for large screens and above
-        },
-        height: '80vh',
-        margin: 'auto',
-        mt: 5,
-        display: 'flex',
-        flexDirection: 'column',
-        border: '1px solid #e0e0e0',
-        borderRadius: 2,
-        overflow: 'hidden',
-        bgcolor: 'background.secondary',
-      }}
+        sx={{
+          width: { xs: '95vw', sm: '85vw', md: '75vw', lg: '60vw' },
+          maxWidth: '900px',
+          height: { xs: '85vh', sm: '80vh' },
+          margin: 'auto',
+          mt: { xs: 3, sm: 5 },
+          display: 'flex',
+          flexDirection: 'column',
+          // border: '1px solid #e0e0e0',
+          borderRadius: 3,
+          boxShadow: '0 2px 10px rgba(0, 0, 0, 0.05)',
+          overflow: 'hidden',
+          bgcolor: 'background.secondary',
+        }}
       >
-        <AppBar position="static" color="primary">
-          <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Typography variant="h6">
+        <AppBar
+          position="static"
+          elevation={0}
+          sx={{ borderBottom: '1px solid #e0e0e0' }}
+        >
+          <Toolbar sx={{ minHeight: 56, px: { xs: 2, sm: 3 } }}>
+            <Typography variant="h6" sx={{ fontWeight: 500, flexGrow: 1 }}>
               {name ? `Chat with ${name}` : 'Hazel'}
             </Typography>
             <Box sx={{ display: 'flex', gap: 1 }}>
               {additionalButtons.map((button, index) => (
-                <Button key={index} color="inherit" onClick={button.onClick}>
+                <Button
+                  key={index}
+                  color="inherit"
+                  onClick={button.onClick}
+                  sx={{ textTransform: 'none', fontWeight: 500 }}
+                >
                   {button.label}
                 </Button>
               ))}
@@ -96,45 +102,42 @@ const ChatWindow = ({
           </Toolbar>
         </AppBar>
 
-        {error && (
-          <Typography color="error" sx={{ p: 2 }}>
-            {error}
-          </Typography>
-        )}
         <Box
           sx={{
             flexGrow: 1,
             overflowY: 'auto',
-            p: 2,
+            p: { xs: 2, sm: 3 },
           }}
         >
-          <List>
+          <List disablePadding>
             {messages.map((message, index) => (
               <ListItem
                 key={index}
+                disableGutters
                 sx={{
-                  justifyContent:
-                    message.sender === 'user' ? 'flex-end' : 'flex-start',
+                  mb: 1,
+                  justifyContent: message.sender === 'user' ? 'flex-end' : 'flex-start',
                 }}
               >
                 <Paper
-                  elevation={1}
                   sx={{
-                    maxWidth: '70%',
-                    p: 1,
-                    backgroundColor:
+                    maxWidth: { xs: '80%', sm: '70%' },
+                    p: { xs: 1.5, sm: 2 },
+                    bgcolor:
                       message.sender === 'user' ? 'background.sender' : 'background.bright',
-                    color: message.sender === 'user' ? '#fffefa' : 'background.sender',
-                    borderRadius: 2,
+                    borderRadius: 3,
+                    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
                   }}
                 >
                   <ListItemText
                     primary={message.text}
                     primaryTypographyProps={{
+                      variant: 'body1',
                       color: message.sender === 'user' ? '#fffefa' : '#000000',
                     }}
                     secondary={message.timestamp}
                     secondaryTypographyProps={{
+                      variant: 'caption',
                       color: message.sender === 'user' ? '#e0e0e0' : '#757575',
                     }}
                   />
@@ -143,14 +146,23 @@ const ChatWindow = ({
             ))}
             <div ref={messagesEndRef} />
             {isSending && (
-              <ListItem sx={{ justifyContent: 'flex-start' }}>
+              <ListItem disableGutters sx={{ justifyContent: 'flex-start' }}>
                 <TypingAnimation />
               </ListItem>
             )}
           </List>
         </Box>
-        <Divider />
-        <Box sx={{ p: 2, display: 'flex', gap: 1 }}>
+
+        <Divider sx={{ bgcolor: '#e0e0e0' }} />
+
+        <Box
+          sx={{
+            p: { xs: 2, sm: 3 },
+            display: 'flex',
+            gap: 1.5,
+            alignItems: 'flex-end',
+          }}
+        >
           <TextField
             inputRef={inputRef}
             fullWidth
@@ -160,19 +172,39 @@ const ChatWindow = ({
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
             multiline
-            maxRows={3}
+            maxRows={4}
             disabled={isSending}
             sx={{
+              '& .MuiOutlinedInput-root': {
+                borderRadius: 2,
+                '& fieldset': {
+                  borderColor: '#233a46',
+                },
+                '&:hover fieldset': {
+                  borderColor: '#233a46',
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: '#233a46',
+                },
+              },
               '& .MuiInputBase-input': {
-                fontSize: 16,
+                fontSize: '0.95rem',
+                py: 1.5,
               },
             }}
           />
           <Button
             variant="contained"
-            color="primary"
             onClick={handleSend}
             disabled={!input.trim() || isSending}
+            sx={{
+              borderRadius: 2,
+              px: { xs: 2, sm: 3 },
+              py: 1.2,
+              textTransform: 'none',
+              fontWeight: 500,
+              minWidth: '80px',
+            }}
           >
             {isSending ? 'Sending...' : 'Send'}
           </Button>
