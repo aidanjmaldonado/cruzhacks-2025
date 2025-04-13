@@ -12,8 +12,6 @@ import os
 # Create app and interviews directory
 # (Run separately with uvicorn app:app --reload --host 0.0.0.0 --port 8081)
 app = FastAPI()
-DATA_DIR = "./interviews"
-os.makedirs(DATA_DIR, exist_ok=True)
 
 # Allow requests from frontend (localhost:5173)
 app.add_middleware(
