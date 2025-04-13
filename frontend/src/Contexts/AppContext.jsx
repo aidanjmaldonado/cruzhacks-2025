@@ -6,6 +6,7 @@ const AppContextProvider = ({children}) => {
   const [messages, setMessages] = useState([])
   const [session_ID, setSession_ID] = useState(undefined)
   const [name, setName] = useState('')
+  const [activePage, setActivePage] = useState('home');
   // const [activeWorkspace, setActiveWorkspace] = useState(undefined);
   // const [activeChannel, setActiveChannel] = useState(undefined);
   // const [activeMessage, setActiveMessage] = useState(undefined);
@@ -13,7 +14,8 @@ const AppContextProvider = ({children}) => {
     <AppContext.Provider
       value={{messages, setMessages,
         session_ID, setSession_ID,
-        name, setName
+        name, setName,
+        activePage, setActivePage
       }}>
       {children}
     </AppContext.Provider>

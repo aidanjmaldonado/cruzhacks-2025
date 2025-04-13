@@ -12,6 +12,9 @@ import {
   Toolbar,
   Divider,
 } from '@mui/material';
+// import RefreshIcon from '@mui/icons-material/Refresh';
+// import IconButton from '@mui/material/IconButton';
+
 import TypingAnimation from '../Animations/model_typing';
 
 const ChatWindow = ({

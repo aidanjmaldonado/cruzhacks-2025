@@ -5,7 +5,7 @@ import ErrorPage from './Common/ErrorPage'; // Optional: for error handling
 import AppContextProvider from './Contexts/AppContext';
 import Credits from './Common/Credits';
 import User from './User';
-import AppHeader from './Common/NavBar';
+// import AppHeader from './Common/NavBar';
 const router = createBrowserRouter([
   {
     path: '/',

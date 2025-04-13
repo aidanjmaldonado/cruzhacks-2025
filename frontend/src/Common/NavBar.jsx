@@ -1,10 +1,27 @@
-// src/components/AppHeader.js
-import React from 'react';
+import React, { useContext } from 'react';
 import { AppBar, Toolbar, Typography, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { AppContext } from '../Contexts/AppContext';
 
 const AppHeader = () => {
+  const { activePage, setActivePage } = useContext(AppContext);
   const navigate = useNavigate();
+
+  const navButton = (label, page, route) => (
+    <Button
+      color="inherit"
+      onClick={() => {
+        setActivePage(page);
+        navigate(route);
+      }}
+      sx={{
+        borderBottom: activePage === page ? '2px solid white' : 'none',
+        borderRadius: 0,
+      }}
+    >
+      {label}
+    </Button>
+  );
 
   return (
     <AppBar position="static" color="primary">
@@ -12,9 +29,9 @@ const AppHeader = () => {
         <Typography variant="h5" sx={{ flexGrow: 1 }}>
           Rallie - UCSC
         </Typography>
-        <Button color="inherit" onClick={() => navigate('/')}>Home</Button>
-        <Button color="inherit" onClick={() => navigate('/chat')}>Interview</Button>
-        <Button color="inherit" onClick={() => navigate('/credits')}>Credits</Button>
+        {navButton('Home', 'home', '/')}
+        {navButton('Interview', 'chat', '/chat')}
+        {navButton('Credits', 'credits', '/credits')}
       </Toolbar>
     </AppBar>
   );

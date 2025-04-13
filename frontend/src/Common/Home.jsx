@@ -11,7 +11,7 @@ const Home = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const { setName, setSession_ID, setMessages } = useContext(AppContext);
+  const { setName, setSession_ID, setMessages, setActivePage } = useContext(AppContext);
 
   const handleStartInterview = async () => {
     setLoading(true);
@@ -29,6 +29,7 @@ const Home = () => {
         ]);
         setName(res.name);
         setSession_ID(res.session_ID);
+        setActivePage('chat');
         navigate(`/chat/${res.session_ID}`);
       } else {
         throw new Error('No session ID returned');
@@ -102,7 +103,7 @@ const Home = () => {
           disabled={loading}
           sx={{ py: 1.5, px: 4 }}
         >
-          {loading ? <CircularProgress size={24} color="inherit" /> : 'Start Interview'}
+          {loading ? <CircularProgress size={24} color="inherit" /> : 'Start Sharing'}
         </Button>
       </Box>
     </Box>

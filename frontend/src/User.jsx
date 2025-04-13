@@ -73,7 +73,13 @@ const LocalChat = () => {
   };
 
   const handleResetMessages = () => {
-    setMessages([]);
+    setMessages([
+      {
+        text: 'Hi what are your issues i am here to help',
+        sender: 'Hazel',
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      }
+    ]);
     setInput('');
     setError(null);
   };
