@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, Header
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional, Annotated
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -12,6 +13,14 @@ app = FastAPI()
 DATA_DIR = "./interviews"
 os.makedirs(DATA_DIR, exist_ok=True)
 
+# Allow requests from frontend (localhost:5173)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # or ["*"] for all
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 # Questions of interest: How do we have FastAPI have sessions - so that our LLM Api has differentiation between users?
 
 # Pydantic Payloads
