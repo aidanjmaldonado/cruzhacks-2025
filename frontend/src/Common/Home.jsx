@@ -1,9 +1,10 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Typography, Button, CircularProgress } from '@mui/material';
+import { Box, Typography, Button, CircularProgress, Paper } from '@mui/material';
 import * as api from '../chatService';
 import { AppContext } from '../Contexts/AppContext';
 // import loadingAnimation from '../Animations/loading';
+
 const Home = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -43,30 +44,60 @@ const Home = () => {
       sx={{
         maxWidth: 600,
         margin: 'auto',
-        mt: 5,
+        mt: 8,
+        px: 3,
         textAlign: 'center',
+        position: 'relative',
+        minHeight: '80vh',
       }}
     >
-      <Typography variant="h4" gutterBottom>
-        Welcome to the Interview Platform
+      <Typography variant="h4" gutterBottom sx={{ mb: 4 }}>
+        Share Your UCSC Story with Hazel
       </Typography>
-      <Typography variant="body1" color="textSecondary" paragraph>
-        Click the button below to start your interview session.
-      </Typography>
-      {error && (
-        <Typography color="error" sx={{ mb: 2 }}>
-          {error}
+      
+      <Box sx={{ mb: 5 }}>
+        <Typography variant="body1" color="textSecondary" paragraph sx={{ mb: 3 }}>
+          Hazel is our automated interviewer here at Rallie.tech. She specializes in gathering 
+          stories about navigating bureaucratic systems at UCSC. When you chat with Hazel, she'll ask open-ended questions to help understand your unique 
+          perspective. Your stories help Rallie build our knowledgebase, and offer support to other students from real experiences 
         </Typography>
-      )}
-      <Button
-        variant="contained"
-        color="primary"
-        size="large"
-        onClick={handleStartInterview}
-        disabled={loading}
-      >
-        {loading ? <CircularProgress size={24} color="inherit" /> : 'Start Interview'}
-      </Button>
+        
+      </Box>
+
+      <Box sx={{ 
+        position: 'absolute', 
+        bottom: 0, 
+        left: 0, 
+        right: 0,
+        mb: 4,
+        px: 3
+      }}>
+        {/* Disclaimer */}
+        <Box sx={{ mb: 4, p: 2, bgcolor: '#f5f5f5', borderRadius: 2 }}>
+          <Typography variant="body2" color="textSecondary">
+            Note: Knowledge and stories shared here will be shared publically
+          </Typography>
+        </Box>
+        
+        {/* Error message */}
+        {error && (
+          <Typography color="error" sx={{ mb: 3 }}>
+            {error}
+          </Typography>
+        )}
+        
+        {/* Button */}
+        <Button
+          variant="contained"
+          color="primary"
+          size="large"
+          onClick={handleStartInterview}
+          disabled={loading}
+          sx={{ py: 1.5, px: 4 }}
+        >
+          {loading ? <CircularProgress size={24} color="inherit" /> : 'Start Interview'}
+        </Button>
+      </Box>
     </Box>
   );
 };
