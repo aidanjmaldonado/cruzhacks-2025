@@ -24,6 +24,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 # Questions of interest: How do we have FastAPI have sessions - so that our LLM Api has differentiation between users?
+# app.add_middleware(
+#     myuserauth
+# )
+def myuserauth():
+    pass
 
 # Pydantic Payloads
 class StartPayload(BaseModel):
@@ -55,7 +60,7 @@ async def start_interview():
     return {"dog":"fluff"}
 
 @app.get("/interview")
-async def start_interview(user_auth: Annotated[Optional[str], Header(alias="User-Auth")] = None):
+async def start_interview(user_auth: Annotated[Optional[str], Header(alias="Authorization")] = None):
 
     # Determine if new or returning user
     if not user_auth:
@@ -65,7 +70,8 @@ async def start_interview(user_auth: Annotated[Optional[str], Header(alias="User
     else:
         # Returning user: keep existing id
         user_ID = user_auth
-        # Set existing use-name
+        print("User token", user_auth)
+        # Set existing user-name
         latest = await collection.find_one({"userID": user_ID}, sort=[("interview_number", -1)])
         if not latest:
             raise HTTPException(status_code=404, detail="Returning user ID not found.")
@@ -104,7 +110,8 @@ async def start_interview(user_auth: Annotated[Optional[str], Header(alias="User
     }
 
 @app.post("/interview/{session_ID}")
-async def submit_answer(session_ID, payload: SubmitPayload):
+async def submit_answer(session_ID, payload: SubmitPayload, user_auth: Annotated[str, Header(alias="Authorization")]):
+
     load_dotenv()
 
     # Convert session id into valid string
