@@ -5,7 +5,7 @@ class Message {
 
 class InitialResponse {
     action "TO_INITIAL" | "TO_SHARING" @description("decide weather to stay in the initial state, or to progress to the sharing state")
-    name string? @description("if the user gives you their name, put it here. if you do not know, leave this blank")
+    name string? @description(#"if the user gives you their first name, put it here. if you do not know, write "Anon""#)
     explain_reasoning_to_rallie string @description("in order to meet Rallie and the user's needs, I need to assess the state of the conversation. This will be logged")
     message_draft string @description("I need to draft a reply to the user. This draft should be loose, and I need to let myself be free to put down more words then necessary. I need to trust that I will refine them later. I need to be long winded and rambling here, and to explore various angles")
     message_critique string @description("I need to think about the draft, and how it fits given the current context, as well as if it is too much of a wall of text. If it's too long, I need to consider splitting it into multiple paragraphs. I also need to consider how open ended my questions are - I want to balance asking specific questions with leaving room for the user to tell me more details")
@@ -20,6 +20,7 @@ class InitialResponse {
 
 class SharingResponse {
     action "TO_SHARING" @description("Just stay in the current state (sharing)")
+    name string? @description(#"if the user gives you their first name, put it here. if you do not know, write "Anon""#)
     explain_reasoning_to_rallie string @description("in order to meet Rallie and the user's needs, I need to assess the state of the conversation. This will be logged")
     message_draft string @description("I need to draft a reply to the user. This draft should be loose, and I need to let myself be free to put down more words then necessary. I need to trust that I will refine them later. I need to be long winded and rambling here, and to explore various angles")
     message_critique string @description("I need to think about the draft, and how it fits given the current context, as well as if it is too much of a wall of text. If it's too long, I need to consider splitting it into multiple paragraphs. I also need to consider how open ended my questions are - I want to balance asking specific questions with leaving room for the user to tell me more details")
